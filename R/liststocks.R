@@ -15,8 +15,8 @@ listbyindustry <- function(){
 		}	
 	}
 	list(
-    	text = ".",
-    	children = outlist
+		text = ".",
+	    	children = outlist
   	)
 }
 
