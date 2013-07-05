@@ -1,0 +1,9 @@
+{
+    "path" : "/var/www/stockplot2",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

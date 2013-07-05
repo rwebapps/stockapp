@@ -1,0 +1,19 @@
+.add-tab {
+    background: url(ext-4.2.1/resources/themes/images/default/dd/drop-add.gif) no-repeat center center;
+}
+    
+.chartIcon {
+    background-image:url(ext-4.2.1/resources/themes/images/default/tree/leaf.gif) !important;
+}
+
+.calendarIcon {
+    background-image:url(ext-4.2.1/resources/themes/images/default/shared/calendar.gif) !important;
+}
+
+.x-tab-bar-default {
+	background-color: transparent;
+}
+
+.x-border-layout-ct {
+	background-color: lightslategray;
+}
