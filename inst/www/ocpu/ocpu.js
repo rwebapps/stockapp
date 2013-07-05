@@ -58,7 +58,7 @@
 		if(!targetdiv.data("div")){
 			targetdiv.data("div", $('<div />').attr({
 				class: "r_fun_plot",
-				style: "width: 100%; height:100%; position:absolute; background-repeat:no-repeat;background-size:contain;"
+				style: "width: 100%; height:100%; position:absolute; background-repeat:no-repeat; background-size: 100% 100%;"
 			}).appendTo(targetdiv));
 		}
 		
@@ -78,14 +78,9 @@
 			}).text("svg").appendTo(div));
 		}		
 		
+		div.css("background-image", "none");
 		var pdf = div.data("pdflink").hide();
 		var svg = div.data("svglink").hide();
-		
-		
-		//resize handler for jQuery UI
-		//div.on("resizestop", function(){
-		//	updatepng();
-		//});	
 		
 		//call the function
 		r_fun_call(fun, args, function(Location){
@@ -105,7 +100,7 @@
 				}
 				pdf.show();
 				svg.show();				
-			}, 1000);				
+			}, 500);				
 			
 			//register update handlers
 			div.on("resize", updatepng);
