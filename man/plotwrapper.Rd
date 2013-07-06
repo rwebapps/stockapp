@@ -1,0 +1,28 @@
+\name{plotwrapper}
+\alias{plotwrapper}
+\title{Plot Wrapper}
+\usage{
+  plotwrapper(type = c("smoothplot", "highlowplot", "areaplot"),
+    ticker = "GOOG", from = "2013-01-01", to = Sys.time(),
+    current = FALSE)
+}
+\arguments{
+  \item{type}{type of plot to create. One of "smoothplot",
+  "highlowplot", "areaplot".}
+
+  \item{ticker}{stock ticker symbol. E.g. "GOOG".}
+
+  \item{from}{start date. Either string or date object.}
+
+  \item{to}{end date. Either string or date object.}
+
+  \item{current}{include the current price of this stock.
+  TRUE/FALSE.}
+}
+\description{
+  This is a wrapper for the OpenCPU application. It is a
+  single function that calls out to various plot types. The
+  function prints a plot to the graphics device and returns
+  nothing.
+}
+

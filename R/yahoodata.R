@@ -1,3 +1,12 @@
+#' Yahoo data
+#' 
+#' Download historical prices for a given stock from Yahoo Finance.
+#' 
+#' @param ticker stock ticker symbol. E.g. "GOOG".
+#' @param from start date. Either string or date object.
+#' @param to end date. Either string or date object.
+#' @return dataframe with historical prices
+#' @export
 yahoodata <- function(ticker, from, to){
   from <- as.Date(from);
   to <- as.Date(to);
