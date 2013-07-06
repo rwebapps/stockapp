@@ -33,34 +33,37 @@ Ext.onReady(function() {
 	    		if(r.data.leaf){
 	    			addWorkspace(r.data.id.substring(7));
 	    		}
+	        },
+	        itemclick : function(s, r){
+	    		if(r.data.leaf){
+	    			var name = r.data.text.split(" - ");
+	    			var stock = name[0]
+	    			var company = name[1];
+	    			Ext.getCmp("details-panel").update('<div class="detaildiv"> <h3>' + company + '</h3> Yahoo Finance: <a target="_blank" href="http://finance.yahoo.com/q?s=' + stock + '">'+stock+'</a></div>');
+	    		}	        	
 	        }
 	    }	    
     });	
     
 	var myToolbar = Ext.create('Ext.toolbar.Toolbar', {
 		"items" :['->',{
-			text:"Smooth Plot", 
-			id: "graphTypeBtn",
-			iconCls: 'chartIcon',
-			menu:{
-				defaults: {
-					handler : function(btn) {
-						Ext.getCmp("graphTypeBtn").setText(btn.text);
-					}, 
-				},
-				id: 'currentGraphType',
-				items:[{
-					text:"Smooth Plot",
-					group: 'graphType',
-					checked: true,
-					value: 'S'
-				},{
-					text:"High/Low Plot",
-					group: 'graphType',
-					checked: false,
-					value: 'H'
-				}]
-			}
+			xtype: "combobox",
+			editable: false,
+		    store: {
+				fields: ['fun', 'name'],
+			    data : [
+			        {"fun":"smoothplot", "name":"Smooth Plot"},
+			        {"fun":"highlowplot", "name":"High/Low Plot"},
+			        {"fun":"areaplot", "name":"Area Plot"}
+			    ]		    	
+		    },
+		    queryMode: 'local',
+		    displayField: 'name',
+		    valueField: 'fun',
+		    value: "smoothplot",
+			id: "graphtype",
+			iconCls: 'chartIcon'
+
 		}, {
 			text: 'From 2013-01-01',
 			id: 'startdatetext',
@@ -81,6 +84,12 @@ Ext.onReady(function() {
 				id: 'enddate',
 				value: new Date()
 			}
+		},{
+			xtype: "button",
+			id: "currentBtn",
+			enableToggle: true,
+			text: "Toggle Current Value",
+			iconCls: 'chartIcon'
 		}]
 	});
 
@@ -96,9 +105,10 @@ Ext.onReady(function() {
 		items: [{
 			iconCls: 'chartIcon',
 			closable: false,
-			title: "Help",
 			border: false,
-			html : "Help help"		
+			title: "Help",
+			anchor: '-10, -262',
+			contentEl: "helpdiv"
 		}],
 		listeners: {
 			"tabchange" : function(tabPanel, newtab){
@@ -115,8 +125,7 @@ Ext.onReady(function() {
         minSize: 150,   
         title: 'Details',
 		region: 'south',		
-        bodyStyle: 'padding-bottom:15px;background:#eee;',
-		html: '<p class="details-info">When you select a company from the menu, some details will display here.</p>'
+        bodyStyle: 'padding-bottom:15px;background:#eee;'
     });	
 
 	new Ext.Viewport({
@@ -138,19 +147,11 @@ Ext.onReady(function() {
 	});
 	
 	function updatestart(date){
-		var dd = date.getDate();
-		var mm = date.getMonth()+1;
-		var yyyy = date.getFullYear();					
-		Ext.getCmp("startdatetext").setText("From: " + yyyy + "-" + mm + "-" + dd);
-		Ext.getCmp('workspace-panel').getActiveTab().data.start = date;		
+		Ext.getCmp("startdatetext").setText("From: " + datetostring(date));
 	}
 	
 	function updateend(date){
-		var dd = date.getDate();
-		var mm = date.getMonth()+1;
-		var yyyy = date.getFullYear();					
-		Ext.getCmp("enddatetext").setText("To: " + yyyy + "-" + mm + "-" + dd);
-		Ext.getCmp('workspace-panel').getActiveTab().data.end = date;			
+		Ext.getCmp("enddatetext").setText("To: " + datetostring(date));
 	}
 	
 	Ext.getCmp("startdate").picker.on("select", function(picker, date){
@@ -163,6 +164,14 @@ Ext.onReady(function() {
 		loadplot();
 	});	
 	
+	Ext.getCmp("currentBtn").on("click", function(){
+		loadplot();
+	});
+	
+	Ext.getCmp("graphtype").on("select", function(){
+		loadplot();
+	})	
+	
 	function addWorkspace(symbol){
 		workspacePanel.add({
 			iconCls: 'chartIcon',
@@ -170,9 +179,10 @@ Ext.onReady(function() {
 			title: symbol,
 			border: false,
 			data : {
-				type : Ext.getCmp("graphTypeBtn").getText(),
-				start : Ext.getCmp("startdate").picker.value,
-				end : Ext.getCmp("enddate").picker.value
+				type : Ext.getCmp("graphtype").getValue(),
+				current : Ext.getCmp("currentBtn").pressed,
+				start : Ext.getCmp("startdate").picker.getValue(),
+				end : Ext.getCmp("enddate").picker.getValue()
 			}
 		}).show();
 		loadplot();
@@ -181,9 +191,10 @@ Ext.onReady(function() {
 	function updatemenu(){
 		var data = Ext.getCmp('workspace-panel').getActiveTab().data;
 		if(data){
-			//Ext.getCmp("graphTypeBtn").setText(data.type);
 			Ext.getCmp("startdate").picker.setValue(data.start);
 			Ext.getCmp("enddate").picker.setValue(data.end);
+			Ext.getCmp("graphtype").setValue(data.type);
+			Ext.getCmp("currentBtn").toggle(data.current);			
 			updatestart(data.start);
 			updateend(data.end);
 		}
@@ -191,10 +202,40 @@ Ext.onReady(function() {
 	
 	function loadplot(){
 		var symbol = Ext.getCmp('workspace-panel').getActiveTab().title;
-		var from = Ext.getCmp("startdatetext").getText().substring(5);
-		var to = Ext.getCmp("enddatetext").getText().substring(3);
+		var from = Ext.getCmp("startdate").picker.getValue();
+		var to = Ext.getCmp("enddate").picker.getValue()
+		var type = Ext.getCmp("graphtype").getValue();
+		var current = Ext.getCmp("currentBtn").pressed;
+		
+		//don't plot help tab
+		if(symbol == "Help"){
+			return;
+		}
+		
+		//save settings in tab
+		Ext.getCmp('workspace-panel').getActiveTab().data = {
+			start: from,
+			end: to,
+			type: type,
+			current: current		
+		}	
+		
+		//request plot using OpenCPU library
 		var id = Ext.getCmp('workspace-panel').getActiveTab().el.id;
-		$("#" + id + "-innerCt").r_fun_plot("smoothplot", {ticker:symbol, from:from, to:to});
+		$("#" + id + "-innerCt").r_fun_plot("plotwrapper", {
+			ticker : symbol, 
+			from : datetostring(from), 
+			to : datetostring(to), 
+			type : type, 
+			current : current
+		});
+	}
+	
+	function datetostring(date){
+		var dd = date.getDate();
+		var mm = date.getMonth()+1;
+		var yyyy = date.getFullYear();					
+		return yyyy + "-" + mm + "-" + dd;		
 	}
 	
 	function loadtree(){

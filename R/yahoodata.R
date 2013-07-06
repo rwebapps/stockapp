@@ -16,7 +16,10 @@ yahoodata <- function(ticker, from, to){
   myurl <- paste("http://ichart.finance.yahoo.com/table.csv?", 
     paste(names(args), args, sep="=", collapse="&"), sep="");
     
-  mydata <- read.csv(myurl)
+  mydata <- tryCatch(read.csv(myurl), error=function(e){
+  	stop("Failed to download data from Yahoo. Could be invalid stock.")
+  });
+  
   mydata$Date <- as.Date(mydata$Date);
   
   return(mydata);

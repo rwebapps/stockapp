@@ -17,3 +17,31 @@
 .x-border-layout-ct {
 	background-color: lightslategray;
 }
+
+.detaildiv {
+	padding: 10px;
+	font-size: 14px;
+}
+
+.detaildiv h3{
+	font-size: 18px;	
+}
+
+.detaildiv a {
+	font-family: monospace;
+}
+
+#helpdiv{
+	max-width: 600px;
+	margin: 25px;
+	font-family:'lucida grande',tahoma,arial,sans-serif;
+    font-size:14px;
+}
+
+#helpdiv h1{
+	font-size: 28px;
+}
+
+#helpdiv p{
+	line-height:150%	
+}
