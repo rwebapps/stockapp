@@ -1,3 +1,7 @@
+Ext.Loader.setConfig({
+    disableCaching: false
+});
+
 Ext.onReady(function() {
 	
 	var today = new Date();
@@ -242,7 +246,8 @@ Ext.onReady(function() {
 		ocpu.r_fun_call("listbyindustry", {}, function(location){
 			Ext.getCmp("tree-panel").getStore().setProxy({
 				type: "ajax",
-				url: location + "R/.val/json"
+				url: location + "R/.val/json",
+				noCache: false
 			});
 			Ext.getCmp("tree-panel").getStore().load();
 		});
