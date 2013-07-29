@@ -6,48 +6,48 @@ Ext.onReady(function() {
 	
 	var today = new Date();
 	
-    var treePanel = new Ext.tree.TreePanel({
-    	id: 'tree-panel',
+  var treePanel = new Ext.tree.TreePanel({
+    id: 'tree-panel',
 		iconCls: 'chartIcon',
-    	title: 'by Index',
-    	region: 'center',
-    	title: "stocks",
-        height: 300,
-        border: false,
-        autoScroll: true,
+    title: 'by Index',
+    region: 'center',
+    title: "stocks",
+    height: 300,
+    border: false,
+    autoScroll: true,
 		lazyRender:true,
-        animate: true,
-        containerScroll: true,
+    animate: true,
+    containerScroll: true,
 		enableDrag: true,
 		dragConfig: {ddGroup: 'DragDrop' },
 		autoWidth: true,
         
-        // tree-specific configs:
-        rootVisible: false,
-        lines: false,
-        singleExpand: true,
-        useArrows: true,
+    // tree-specific configs:
+    rootVisible: false,
+    lines: false,
+    singleExpand: true,
+    useArrows: true,
 		store: {
-	        root: {
-	            expanded: true
-	        }
+	    root: {
+	      expanded: true
+      }
+    },
+    listeners: {
+	    itemdblclick: function(s, r){
+        if(r.data.leaf){
+	    		addWorkspace(r.data.id.substring(7));
+	    	}
 	    },
-	    listeners: {
-	    	itemdblclick: function(s, r){
-	    		if(r.data.leaf){
-	    			addWorkspace(r.data.id.substring(7));
-	    		}
-	        },
-	        itemclick : function(s, r){
-	    		if(r.data.leaf){
-	    			var name = r.data.text.split(" - ");
-	    			var stock = name[0]
-	    			var company = name[1];
-	    			Ext.getCmp("details-panel").update('<div class="detaildiv"> <h3>' + company + '</h3> Yahoo Finance: <a target="_blank" href="http://finance.yahoo.com/q?s=' + stock + '">'+stock+'</a></div>');
-	    		}	        	
-	        }
-	    }	    
-    });	
+	    itemclick : function(s, r){
+	      if(r.data.leaf){
+	    	  var name = r.data.text.split(" - ");
+	    		var stock = name[0]
+	    		var company = name[1];
+	    		Ext.getCmp("details-panel").update('<div class="detaildiv"> <h3>' + company + '</h3> Yahoo Finance: <a target="_blank" href="http://finance.yahoo.com/q?s=' + stock + '">'+stock+'</a></div>');
+	    	}	        	
+	    }
+	  }	    
+  });	
     
 	var myToolbar = Ext.create('Ext.toolbar.Toolbar', {
 		"items" :['->',{
@@ -243,7 +243,7 @@ Ext.onReady(function() {
 	}
 	
 	function loadtree(){
-		ocpu.r_fun_call("listbyindustry", {}, function(location){
+		opencpu.r_fun_call("listbyindustry", {}, function(location){
 			Ext.getCmp("tree-panel").getStore().setProxy({
 				type: "ajax",
 				url: location + "R/.val/json",
@@ -252,9 +252,8 @@ Ext.onReady(function() {
 			Ext.getCmp("tree-panel").getStore().load();
 		});
 	}
-	
-	
-	//init
+
+  //init
 	loadtree();
 
 });
