@@ -1,5 +1,5 @@
 Ext.Loader.setConfig({
-    disableCaching: false
+  disableCaching: false
 });
 
 Ext.onReady(function() {
@@ -225,12 +225,14 @@ Ext.onReady(function() {
     
     //request plot using OpenCPU library
     var id = Ext.getCmp('workspace-panel').getActiveTab().el.id;
-    $("#" + id + "-innerCt").r_fun_plot("plotwrapper", {
+    var req = $("#" + id + "-innerCt").r_fun_plot("plotwrapper", {
       ticker : symbol, 
       from : datetostring(from), 
       to : datetostring(to), 
       type : type, 
       current : current
+    }).fail(function(){
+      alert("Failed to plot stock: " + req.responseText)
     });
   }
   
@@ -243,13 +245,15 @@ Ext.onReady(function() {
   
   //this function gets a list of stocks to populate the tree panel
   function loadtree(){
-    opencpu.r_fun_call("listbyindustry", {}, function(location){
+    var req = opencpu.r_fun_call("listbyindustry", {}, function(location){
       Ext.getCmp("tree-panel").getStore().setProxy({
         type: "ajax",
         url: location + "R/.val/json",
         noCache: false
       });
       Ext.getCmp("tree-panel").getStore().load();
+    }).fail(function(){
+      alert("Failed to load stocks: " + req.responseText);
     });
   }
 
