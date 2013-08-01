@@ -4,8 +4,10 @@ Gitstats
 Simple OpenCPU Application. To install in R:
 
     library(devtools)
+    install_github("opencpu", "jeroenooms")
     install_github("stocks", "opencpu")
 
+    #load the app
     library(opencpu)
     opencpu$browse("library/stocks/www")
 
