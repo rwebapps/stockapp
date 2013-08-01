@@ -1,5 +1,5 @@
-Gitstats
---------
+OpenCPU App: Stocks
+-------------------
 
 Simple OpenCPU Application. To install in R:
 
