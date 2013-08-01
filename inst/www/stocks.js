@@ -245,11 +245,13 @@ Ext.onReady(function() {
   
   //this function gets a list of stocks to populate the tree panel
   function loadtree(){
-    var req = opencpu.r_fun_call("listbyindustry", {}, function(location){
+    var req = opencpu.r_fun_json("listbyindustry", {}, function(data){
       Ext.getCmp("tree-panel").getStore().setProxy({
-        type: "ajax",
-        url: location + "R/.val/json",
-        noCache: false
+        type : "memory",
+        data : data,
+        reader : {
+          type: "json"
+        }
       });
       Ext.getCmp("tree-panel").getStore().load();
     }).fail(function(){
@@ -259,5 +261,4 @@ Ext.onReady(function() {
 
   //init
   loadtree();
-
 });
