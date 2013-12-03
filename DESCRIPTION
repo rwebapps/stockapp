@@ -1,5 +1,5 @@
 Package: stocks
-Type: OpenCPU App
+Type: Package
 Title: Stocks Web Application
 Version: 1.0
 Date: 2013-07-06
@@ -11,3 +11,4 @@ License: GPL
 LazyData: yes
 Imports:
     ggplot2
+Suggests: opencpu (>= 1.2)
