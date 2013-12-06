@@ -1,20 +1,20 @@
 /**
  * Javascript client library for OpenCPU
- * Version 0.3
+ * Version 0.4
  * Depends: jQuery
  * Requires HTML5 FormData support for file uploads
  * http://github.com/jeroenooms/opencpu.js
  * 
  * Include this file in your apps and packages. 
- * You only need to use opencpu.seturl if this page is hosted outside of the OpenCPU package. For example:
-
- * opencpu.seturl("/ocpu/library/mypackage/R")
- * opencpu.seturl("https://public.opencpu.org/ocpu/library/mypackage/R")
- * opencpu.seturl("../R") //default value
+ * You only need to use ocpu.seturl if this page is hosted outside of the OpenCPU package. For example:
+ *
+ * ocpu.seturl("../R") //default, use for apps
+ * ocpu.seturl("//public.opencpu.org/ocpu/library/mypackage/R") //CORS
+ * ocpu.seturl("/ocpu/library/mypackage/R") //hardcode path
  */
 
 (function ( $ ) {
-  
+
   //global variable 
   var r_cors = false;
   var r_path = document.createElement('a');
@@ -22,31 +22,63 @@
 
 
   //new Session()
-  function Session(loc, key){
+  function Session(loc, key, txt){
     this.loc = loc;
-    this.key = key;
-    
+    this.key = key; 
+    this.txt = txt;
+    this.output = txt.split(/\r\n|\r|\n/g);
+
     this.getKey = function(){
       return key;
-    }
+    };
     
     this.getLoc = function(){
       return loc;
-    }
-    
-    this.getFile = function(path){
+    };
+
+    this.getFileURL = function(path){
       return this.getLoc() + "files/" + path;
-    }
+    };
+
+    this.getFile = function(path, success){
+      var url = this.getFileURL(path);
+      return $.get(url, success);
+    };
+
+    this.getObject = function(name, data, success){
+      //in case of no arguments
+      name = name || ".val";
+
+      //first arg is a function
+      if(name instanceof Function){
+        //pass on to second arg
+        success = name;
+        name = ".val";
+      }
+
+      var url = this.getLoc() + "R/" + name + "/json";
+      return $.get(url, data, success);
+    };
+
+    this.getStdout = function(success){
+      var url = this.getLoc() + "stdout/text";
+      return $.get(url, success);
+    };
+
+    this.getConsole = function(success){
+      var url = this.getLoc() + "console/text";
+      return $.get(url, success);
+    };
   }
   
   //for POSTing raw code snippets
   //new Snippet("rnorm(100)")
   function Snippet(code){
-    this.code = code;
+    this.code = code || "NULL";
     
     this.getCode = function(){
       return code;
-    }
+    };
   }
   
   //for POSTing files
@@ -66,7 +98,7 @@
     
     this.getFile = function(){
       return file;
-    }
+    };
   }
   
   function stringify(x){
@@ -93,8 +125,8 @@
   function r_fun_ajax(fun, settings, handler){
     //validate input
     if(!fun) throw "r_fun_call called without fun";
-    var settings = settings || {};
-    var handler = handler || function(){};
+    settings = settings || {};
+    handler = handler || function(){};
     
     //set global settings
     settings.url = settings.url || (r_path.href + "/" + fun);
@@ -106,14 +138,15 @@
     var jqxhr = $.ajax(settings).done(function(){
       var loc = jqxhr.getResponseHeader('Location') || console.log("Location response header missing.");
       var key = jqxhr.getResponseHeader('X-ocpu-session') || console.log("X-ocpu-session response header missing.");
+      var txt = jqxhr.responseText;
       
       //in case of cors we translate the relative path
       if(r_cors){
         loc = r_path.protocol + "//" + r_path.host + loc;
       }
-      handler(new Session(loc, key));
+      handler(new Session(loc, key, txt));
     }).fail(function(){
-      console.log("OpenCPU error HTTP " + jqxhr.status + "\n" + jqxhr.responseText)
+      console.log("OpenCPU error HTTP " + jqxhr.status + "\n" + jqxhr.responseText);
     });
     
     //function chaining
@@ -151,7 +184,6 @@
     });
     return r_fun_ajax(fun, {
       data: formdata,
-      contentType : 'multipart/form-data',       
       cache: false,
       contentType: false,
       processData: false      
@@ -160,9 +192,9 @@
   
   //Automatically determines type based on argument classes.
   function r_fun_call(fun, args, handler){
+    args = args || {};
     var hasfiles = false;
     var hascode = false;
-    var args = args || {};
     
     //find argument types
     $.each(args, function(key, value){
@@ -176,8 +208,7 @@
     //determine type
     if(hasfiles){
       return r_fun_call_multipart(fun, args, handler);
-    } else if(hascode || r_cors){
-      //note: cors with application/json requires preflighting, which is supported but annoying.
+    } else if(hascode){
       return r_fun_call_urlencoded(fun, args, handler);
     } else {
       return r_fun_call_json(fun, args, handler); 
@@ -185,37 +216,22 @@
   }    
   
   //call a function and return JSON
-  function r_fun_json(fun, args, handler){
-    return r_fun_call(fun, args, function(tmp){
-      $.get(tmp.getLoc() + "R/.val/json", function(data){
-        handler && handler(data);
+  function rpc(fun, args, handler){
+    return r_fun_call(fun, args, function(session){
+      session.getObject(function(data){
+        if(handler) handler(data);
       }).fail(function(){
-        console.log("Failed to get JSON response for " + loc);
+        console.log("Failed to get JSON response for " + session.getLoc());
       });
     });
   }
   
-  //post form data (including files)
-  $.fn.r_post_form = function(fun, handler) {
-    
-    testhtml5();    
-    var targetform = this; 
-    var postdata = new FormData(targetform[0]);
-    
-    return r_fun_ajax(fun, {
-      data: postdata,
-      cache: false,
-      contentType: false,
-      processData: false   
-    }, handler);
-  }
-  
   //plotting widget
   //to be called on an (empty) div.
-  $.fn.r_fun_plot = function(fun, args) {
+  $.fn.rplot = function(fun, args) {
     var targetdiv = this;
     var myplot = initplot(targetdiv);
- 
+
     //reset state
     myplot.setlocation();
     myplot.spinner.show();
@@ -226,7 +242,7 @@
     }).always(function(){
       myplot.spinner.hide();      
     });
-  }
+  };
   
   function initplot(targetdiv){
     if(targetdiv.data("ocpuplot")){
@@ -234,7 +250,7 @@
     }
     var ocpuplot = function(){
       //local variables
-      var Location
+      var Location;
       var pngwidth;
       var pngheight;
       
@@ -245,17 +261,17 @@
       var spinner = $('<span />').attr({
         style : "position: absolute; top: 20px; left: 20px; z-index:1000; font-family: monospace;" 
       }).text("loading...").appendTo(plotdiv);
-  
+
       var pdf = $('<a />').attr({
         target: "_blank",        
         style: "position: absolute; top: 10px; right: 10px; z-index:1000; text-decoration:underline; font-family: monospace;"
       }).text("pdf").appendTo(plotdiv);
-  
+
       var svg = $('<a />').attr({
         target: "_blank",
         style: "position: absolute; top: 30px; right: 10px; z-index:1000; text-decoration:underline; font-family: monospace;"
       }).text("svg").appendTo(plotdiv);
-  
+
       var png = $('<a />').attr({
         target: "_blank",
         style: "position: absolute; top: 50px; right: 10px; z-index:1000; text-decoration:underline; font-family: monospace;"
@@ -301,7 +317,7 @@
       return {
         setlocation: setlocation,
         spinner : spinner
-      }
+      };
     }();
     
     targetdiv.data("ocpuplot", ocpuplot);
@@ -325,7 +341,7 @@
       if (callNow)
         result = func.apply(context, args);
       return result;
-    }
+    };
   }
   
   function testhtml5(){
@@ -336,11 +352,11 @@
   }
   
   //export
-  window.opencpu = window.opencpu || {};
-  var opencpu = window.opencpu;
+  window.ocpu = window.ocpu || {};
+  var ocpu = window.ocpu;
   
   //global settings
-  opencpu.seturl = function(newpath){
+  function seturl(newpath){
     if(!newpath.match("/R$")){
       alert("ERROR! Trying to set R url to: " + newpath +". Path to an OpenCPU R package must end with '/R'");
     } else {
@@ -358,7 +374,7 @@
       if(r_cors){
         console.log("Setting path to CORS server " + r_path.href);
       } else {
-        console.log("Setting path to local (non-CORS) server " + r_path.href)
+        console.log("Setting path to local (non-CORS) server " + r_path.href);
       }
       $.get(r_path.href, function(resdata){
         console.log("Path updated. Available objects/functions:\n" + resdata);
@@ -367,17 +383,17 @@
   }
 
   //exported functions
-  opencpu.r_fun_call = r_fun_call;
-  opencpu.r_fun_json = r_fun_json;
+  ocpu.call = r_fun_call;
+  ocpu.rpc = rpc;
+  ocpu.seturl = seturl;
   
   //exported constructors
-  opencpu.Session = Session;
-  opencpu.Snippet = Snippet;
-  opencpu.Upload = Upload;
+  ocpu.Snippet = Snippet;
+  ocpu.Upload = Upload;
   
   //for innernetz exploder
   if (typeof console == "undefined") {
     this.console = {log: function() {}};
   }  
-      
+
 }( jQuery ));

@@ -225,7 +225,7 @@ Ext.onReady(function() {
     
     //request plot using OpenCPU library
     var id = Ext.getCmp('workspace-panel').getActiveTab().el.id;
-    var req = $("#" + id + "-innerCt").r_fun_plot("plotwrapper", {
+    var req = $("#" + id + "-innerCt").rplot("plotwrapper", {
       ticker : symbol, 
       from : datetostring(from), 
       to : datetostring(to), 
@@ -245,7 +245,7 @@ Ext.onReady(function() {
   
   //this function gets a list of stocks to populate the tree panel
   function loadtree(){
-    var req = opencpu.r_fun_json("listbyindustry", {}, function(data){
+    var req = ocpu.rpc("listbyindustry", {}, function(data){
       Ext.getCmp("tree-panel").getStore().setProxy({
         type : "memory",
         data : data,
