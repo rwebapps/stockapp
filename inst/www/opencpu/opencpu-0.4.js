@@ -1,6 +1,6 @@
 /**
  * Javascript client library for OpenCPU
- * Version 0.4.1
+ * Version 0.4.3
  * Depends: jQuery
  * Requires HTML5 FormData support for file uploads
  * http://github.com/jeroenooms/opencpu.js
@@ -227,7 +227,7 @@
   
   //plotting widget
   //to be called on an (empty) div.
-  $.fn.rplot = function(fun, args) {
+  $.fn.rplot = function(fun, args, cb) {
     var targetdiv = this;
     var myplot = initplot(targetdiv);
 
@@ -238,6 +238,9 @@
     // call the function
     return r_fun_call(fun, args, function(tmp) {
       myplot.setlocation(tmp.getLoc());
+      
+      //call success handler as well
+      if(cb) cb(tmp);
     }).always(function(){
       myplot.spinner.hide();      
     });
@@ -254,7 +257,7 @@
       var pngheight;
       
       var plotdiv = $('<div />').attr({
-        style: "width: 100%; height:100%; min-width: 100px; min-height: 100px; position:absolute; background-repeat:no-repeat; background-size: 100% 100%;"
+        style: "width: 100%; height:100%; min-width: 100px; min-height: 100px; position:relative; background-repeat:no-repeat; background-size: 100% 100%;"
       }).appendTo(targetdiv).css("background-image", "none");
       
       var spinner = $('<span />').attr({
