@@ -22,3 +22,4 @@ Use the same function locally:
     ?plotwrapper
 
 For more information about OpenCPU apps, see [opencpu.js](https://github.com/jeroenooms/opencpu.js#readme)
+
