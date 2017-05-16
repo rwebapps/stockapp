@@ -8,7 +8,8 @@ check_tickers <- function(tickers){
    vapply(tickers, function(symbol){
     out <- symbol_exists(symbol)
     cat(sprintf("%s: %s\n", symbol, ifelse(out, "OK", "DEAD")))
-    Sys.sleep(1); gc()
+    Sys.sleep(1)
+    gc()
     return(out)
   }, logical(1))
 }
