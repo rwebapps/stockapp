@@ -255,6 +255,7 @@
       var Location;
       var pngwidth;
       var pngheight;
+      var ratio = window.devicePixelRatio || 1;
       
       var plotdiv = $('<div />').attr({
         style: "width: 100%; height:100%; min-width: 100px; min-height: 100px; position:relative; background-repeat:no-repeat; background-size: 100% 100%;"
@@ -283,7 +284,7 @@
         if(!Location) return;
         pngwidth = plotdiv.width();
         pngheight = plotdiv.height();
-        plotdiv.css("background-image", "url(" + Location + "graphics/last/png?width=" + pngwidth + "&height=" + pngheight + ")");       
+        plotdiv.css("background-image", "url(" + Location + "graphics/last/png?width=" + pngwidth * ratio + "&height=" + pngheight * ratio + "&res=" + 96 * ratio + ")");       
       }
       
       function setlocation(newloc){
