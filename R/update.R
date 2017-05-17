@@ -15,9 +15,9 @@ check_tickers <- function(tickers){
 }
 
 symbol_exists <- function(symbol){
-  for(i in 1:3){
+  for(i in 1:2){
     try({
-      yahoodata(symbol, "2013-01-01", as.character(Sys.Date()))
+      googledata(symbol, "2015-01-01", as.character(Sys.Date()))
       return(TRUE)
     }, silent = TRUE)
   }
