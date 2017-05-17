@@ -1,3 +1,4 @@
+#' @export
 listbyindustry <- function(){
   newtable <- with(stocktable, data.frame(id=paste0("symbol_", Ticker), text=paste(Ticker, "-", Company), leaf=TRUE, Industry=Industry, Sector=Sector));
   mydata <- splitIntoTree(newtable, "Sector");
