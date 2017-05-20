@@ -1,25 +1,12 @@
 OpenCPU App: Stocks
 -------------------
 
-Simple OpenCPU Application. To install in R:
+Simple OpenCPU Application. To run R:
 
-    library(devtools)
-    install_github("opencpu", "jeroenooms")
-    install_github("stocks", "opencpu")
+```r
+#load the app
+library(opencpu)
+ocpu_start_app('rwebapps/stockapp')
+```
 
-    #load the app
-    library(opencpu)
-    opencpu$browse("library/stocks/www")
-
-Use the same function locally:
-
-    library(stocks)
-    smoothplot()
-    highlowplot()
-    areaplot()
-
-    ?smoothplot
-    ?plotwrapper
-
-For more information about OpenCPU apps, see [opencpu.js](https://github.com/jeroenooms/opencpu.js#readme)
-
+You can also use the app on https://rwebapps.ocpu.io/stockapp/
