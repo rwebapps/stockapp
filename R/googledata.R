@@ -24,7 +24,7 @@ googledata <- function(ticker, from, to){
   tmp <- tempfile()
   on.exit(unlink(tmp))
   curl::curl_download(myurl, tmp)
-  mydata <- read.csv(tmp, stringsAsFactors = FALSE)
+  mydata <- read.csv(tmp, stringsAsFactors = FALSE, fileEncoding = "UTF-8-BOM")
   
   # Seems that google returns string like "22-Sep-16" at least on my machine
   mydata$Date <- as.Date(strptime(mydata$Date, "%d-%b-%y"))
