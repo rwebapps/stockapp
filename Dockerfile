@@ -1,7 +1,7 @@
 FROM opencpu/base
 
 RUN \
-  add-apt-repository -y ppa:marutter/rrutter && \
+  add-apt-repository -y ppa:marutter/c2d4u && \
   apt-get update && \
   apt-get install -y r-cran-ggplot2
 
