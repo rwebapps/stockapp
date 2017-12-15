@@ -9,7 +9,6 @@ Ext.onReady(function() {
   var treePanel = new Ext.tree.TreePanel({
     id: 'tree-panel',
     iconCls: 'chartIcon',
-    title: 'by Index',
     region: 'center',
     title: "stocks",
     height: 300,
@@ -41,7 +40,7 @@ Ext.onReady(function() {
       itemclick : function(s, r){
         if(r.data.leaf){
           var name = r.data.text.split(" - ");
-          var stock = name[0]
+          var stock = name[0];
           var company = name[1];
           Ext.getCmp("details-panel").update('<div class="detaildiv"> <h3>' + company + '</h3> Yahoo Finance: <a target="_blank" href="http://finance.yahoo.com/q?s=' + stock + '">'+stock+'</a></div>');
         }            
@@ -206,7 +205,7 @@ Ext.onReady(function() {
   function loadplot(){
     var symbol = Ext.getCmp('workspace-panel').getActiveTab().title;
     var from = Ext.getCmp("startdate").picker.getValue();
-    var to = Ext.getCmp("enddate").picker.getValue()
+    var to = Ext.getCmp("enddate").picker.getValue();
     var type = Ext.getCmp("graphtype").getValue();
     var current = Ext.getCmp("currentBtn").pressed;
     
