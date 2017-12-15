@@ -18,7 +18,7 @@ googledata <- function(ticker, from, to){
     enddate = as.character(to)
   )
   
-  myurl <- paste0("https://www.google.com/finance/historical?",
+  myurl <- paste0("https://finance.google.com/finance/historical?",
     paste(names(args), args, sep="=", collapse="&"))
   
   tmp <- tempfile()
