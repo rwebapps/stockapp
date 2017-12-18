@@ -23,9 +23,12 @@ plotwrapper <- function(type=c("smoothplot", "highlowplot", "areaplot"), ticker=
 	myplot <- myplot + xlab("") + ylab(ticker);
 	
 	if(isTRUE(current)){
-		currentvalue <- getcurrent(ticker)$Value
-		myplot <- myplot + geom_hline(yintercept = currentvalue, colour = "red", linetype = 2, size = 0.8);	
-		myplot <- myplot + geom_text(x = -Inf, y = currentvalue, label = paste("$", currentvalue), hjust = -1, vjust = -0.5, color="black");	
+		current <- tryCatch(getcurrent(ticker), error = function(e){
+		  utils::head(googledata(ticker), 1)
+		})
+		value <- current$Close
+		myplot <- myplot + geom_hline(yintercept = value, colour = "red", linetype = 2, size = 0.8);	
+		myplot <- myplot + geom_text(x = -Inf, y = value, label = paste("$", value), hjust = -1, vjust = -0.5, color="black");	
 	}
 	
 	#make sure to print the plot
