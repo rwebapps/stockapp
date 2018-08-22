@@ -1,6 +1,8 @@
 OpenCPU App: Stocks
 -------------------
 
+NB: this app no longer works because Google silently killed off the Finance API.
+
 Simple OpenCPU Application. To run R:
 
 ```r
