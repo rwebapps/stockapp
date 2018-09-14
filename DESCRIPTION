@@ -10,5 +10,6 @@ Description: An OpenCPU Application to make charts of historical stock data
 License: GPL
 LazyData: yes
 Imports:
-    ggplot2
-RoxygenNote: 6.0.1
+    ggplot2,
+    jsonlite
+RoxygenNote: 6.1.0

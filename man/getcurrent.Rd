@@ -11,4 +11,6 @@ getcurrent(ticker = "GOOG")
 }
 \description{
 Returns a row with the latest price for a given stock.
+NOTE: see \url{http://www.networkerror.org/component/content/article/1-technical-wootness/44-googles-undocumented-finance-api.html}
+for API details.
 }

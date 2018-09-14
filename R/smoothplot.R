@@ -8,6 +8,6 @@
 #' @return ggplot object.
 #' @export
 smoothplot <- function(ticker = "GOOG", from = "2013-01-01", to=Sys.time()){
-  mydata <- googledata(ticker, from, to);
-  qplot(Date, Close, data = mydata, geom = c("line", "smooth"));  
+  mydata <- iexdata(ticker, from, to);
+  qplot(date, close, data = mydata, geom = c("line", "smooth"));  
 }
