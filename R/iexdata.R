@@ -24,7 +24,7 @@ iexdata <- function(ticker, from = NULL, to = NULL){
 }
 
 iex_get <- function(endpoint){
-  tk <- rawToChar(jsonlite::base64_dec("cGtfNmU0NTJjNjRiNTNiNGNiOGEwYmY3ZDMyZjM4MTc3NTA="))
-  urlz <- paste0('https://cloud.iexapis.com/v1', endpoint, "?token=", tk)
+  args <- jsonlite::base64_dec("P3Rva2VuPXBrXzZlNDUyYzY0YjUzYjRjYjhhMGJmN2QzMmYzODE3NzUw")
+  urlz <- paste0('https://cloud.iexapis.com/v1', endpoint, rawToChar(args))
   jsonlite::parse_json(base::url(urlz), simplifyVector = TRUE)
 }
