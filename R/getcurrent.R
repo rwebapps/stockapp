@@ -7,6 +7,6 @@
 #' @param ticker stock ticker symbol. E.g. "GOOG".
 #' @export
 getcurrent <- function(ticker="GOOG"){
-    url <- sprintf('https://api.iextrading.com/1.0/stock/%s/quote', ticker)
-    jsonlite::fromJSON(url)
+  endpoint <- sprintf('/stock/%s/quote', ticker)
+  iex_get(endpoint)
 }

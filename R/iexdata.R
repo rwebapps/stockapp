@@ -8,9 +8,8 @@
 #' @return dataframe with historical prices
 #' @export
 iexdata <- function(ticker, from = NULL, to = NULL){
-  tk <- rawToChar(jsonlite::base64_dec("cGtfNmU0NTJjNjRiNTNiNGNiOGEwYmY3ZDMyZjM4MTc3NTA="))
-  url <- sprintf('https://cloud.iexapis.com/v1/stock/%s/chart/5y?token=%s', ticker, tk)
-  mydata <- jsonlite::fromJSON(url)
+  endpoint <- sprintf('/stock/%s/chart/5y', ticker)
+  mydata <- iex_get(endpoint)
   if (!length(mydata) || !nrow(mydata)) 
     stop("Failed to get data for: ", ticker)
   mydata$date <- as.Date(strptime(mydata$date, '%Y-%m-%d'))
@@ -22,4 +21,10 @@ iexdata <- function(ticker, from = NULL, to = NULL){
     mydata <- mydata[mydata$date < as.Date(to),]
   
   return(mydata);
+}
+
+iex_get <- function(endpoint){
+  tk <- rawToChar(jsonlite::base64_dec("cGtfNmU0NTJjNjRiNTNiNGNiOGEwYmY3ZDMyZjM4MTc3NTA="))
+  urlz <- paste0('https://cloud.iexapis.com/v1', endpoint, "?token=", tk)
+  jsonlite::parse_json(base::url(urlz), simplifyVector = TRUE)
 }
