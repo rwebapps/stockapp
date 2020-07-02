@@ -1,7 +1,7 @@
 Package: stocks
 Type: Package
 Title: Stocks Web Application
-Version: 1.0
+Version: 1.1
 Date: 2019-11-03
 Author: Jeroen
 Maintainer: Jeroen <jeroen@berkeley.edu>
