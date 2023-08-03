@@ -1,7 +1,7 @@
 Package: stocks
 Type: Package
 Title: Stocks Web Application
-Version: 1.1
+Version: 1.2
 Author: Jeroen
 Maintainer: Jeroen <jeroen@berkeley.edu>
 Description: An OpenCPU Application to make charts of historical stock data
@@ -10,5 +10,6 @@ License: GPL
 LazyData: yes
 Imports:
     ggplot2,
-    jsonlite
+    jsonlite,
+    quantmod
 RoxygenNote: 6.1.0

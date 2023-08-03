@@ -8,7 +8,7 @@
 #' @return ggplot object.
 #' @export
 highlowplot <- function(ticker = "GOOG", from = "2013-01-01", to=Sys.time()){
-  mydata <- iexdata(ticker, from, to);
+  mydata <- yahoodata(ticker, from, to);
   mydata$up <- mydata$open < mydata$close;
   ggplot(data=mydata, aes(date, close, ymin=low, ymax=high, color=up)) + geom_linerange() + theme(legend.position="none");
 }

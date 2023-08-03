@@ -7,6 +7,5 @@
 #' @param ticker stock ticker symbol. E.g. "GOOG".
 #' @export
 getcurrent <- function(ticker="GOOG"){
-  endpoint <- sprintf('/stock/%s/quote', ticker)
-  iex_get(endpoint)
+  yahoodata(ticker, Sys.Date(), Sys.Date()+1)$close
 }
