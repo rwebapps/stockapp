@@ -4,9 +4,13 @@
 \alias{plotwrapper}
 \title{Plot Wrapper}
 \usage{
-plotwrapper(type = c("smoothplot", "highlowplot", "areaplot"),
-  ticker = "GOOG", from = "2013-01-01", to = Sys.time(),
-  current = FALSE)
+plotwrapper(
+  type = c("smoothplot", "highlowplot", "areaplot"),
+  ticker = "GOOG",
+  from = "2013-01-01",
+  to = Sys.time(),
+  current = FALSE
+)
 }
 \arguments{
 \item{type}{type of plot to create. One of "smoothplot", "highlowplot", "areaplot".}
