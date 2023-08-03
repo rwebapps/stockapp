@@ -1,9 +1,17 @@
 #' @export
 listbyindustry <- function(){
-  newtable <- with(stocktable, data.frame(id=paste0("symbol_", Ticker), text=paste(Ticker, "-", Company), leaf=TRUE, Industry=Industry, Sector=Sector));
+  return(menudata)
+}
+ 
+# We take some old db data (stocktable) and filter out stocks that still exist
+update_menudata <- function(){
+  exists <- TTR::stockSymbols()$Symbol
+  stockdata <- subset(stocktable, Ticker %in% exists)
+  newtable <- with(stockdata, data.frame(id=paste0("symbol_", Ticker), text=paste(Ticker, "-", Company), leaf=TRUE, Industry=Industry, Sector=Sector));
   mydata <- splitIntoTree(newtable, "Sector");
   mydata$children <- lapply(mydata$children, splitIntoTree, f="Industry", out=c("id", "text", "leaf"));
-  invisible(list("text"=".", children=mydata))
+  menudata <- invisible(list("text"=".", children=mydata))
+  save(menudata, file = 'data/menudata.rda')
 }
 
 splitIntoTree <- function(x, f, out){
