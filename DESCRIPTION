@@ -1,7 +1,7 @@
 Package: stocks
 Type: Package
 Title: Stocks Web Application
-Version: 1.2
+Version: 1.3
 Author: Jeroen
 Maintainer: Jeroen <jeroen@berkeley.edu>
 Description: An OpenCPU Application to make charts of historical stock data
