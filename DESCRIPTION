@@ -1,4 +1,4 @@
-Package: stocks
+Package: stockapp
 Type: Package
 Title: Stocks Web Application
 Version: 1.3
